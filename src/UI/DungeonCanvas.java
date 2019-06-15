@@ -6,10 +6,11 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class DungeonCanvas extends Canvas {
-    private int spriteSize = 50;
-    private int cameraX = 0;
-    private int cameraY = 0;
-    private static final int WIDTH = 640 * 3, HEIGHT = WIDTH / 12 * 9;
+    //private static final int WIDTH = 640 * 3, HEIGHT = WIDTH / 12 * 9;
+    private static final int WIDTH = 1000, HEIGHT = 1000;
+    private int spriteSize = 100;
+    private int cameraX = WIDTH/2+25;
+    private int cameraY = HEIGHT/2+25;
 
     public DungeonCanvas() {
         //this.addMouseListener(new MouseInput(this));
@@ -27,17 +28,29 @@ public class DungeonCanvas extends Canvas {
     }
 
     public void tileClicked(int x, int y) {
-        int y1 = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
-        int x1 = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
+        int renderY = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
+        int renderX = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
+        System.out.println("#######################");
+        System.out.println("Rendered X: " + renderX);
+        System.out.println("Rendered Y: " + renderY);
+        int offsetX = renderX * spriteSize - cameraX + WIDTH / 2;
+        int offsetY = renderY * spriteSize - cameraY + HEIGHT / 2;
+        System.out.println(offsetX);
+        System.out.println(offsetY);
+        int clickedX = (x - offsetX)/spriteSize + renderX ;
+        int clickedY = (y - offsetY)/spriteSize + renderY ;
 
-        // y1*spriteSize-cameraY+HEIGHT/2;
-        // x1*spriteSize-cameraX+WIDTH/2;
+        System.out.println("clicked X: " + clickedX);
+        System.out.println("clicked Y: " + clickedY);
+        //System.out.println(x);
+
     }
 
     public void changeCamera(int x, int y) {
         cameraX += x;
         cameraY += y;
     }
+
     public void render() {
         BufferStrategy bs = this.getBufferStrategy();
         if (bs == null) {
@@ -52,20 +65,20 @@ public class DungeonCanvas extends Canvas {
         switch (Game.gameState) {
             case MAIN_MENU: {
                 g.setColor(Color.WHITE);
-                g.drawString("Click to Start",WIDTH/2,HEIGHT/2);
+                g.drawString("Click to Start", WIDTH / 2, HEIGHT / 2);
                 //g.fillRect(WIDTH/2,HEIGHT/2,400,100);
                 break;
             }
             case GAME:
 
-                int y1 = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
-                int x1 = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
-                for (int y = y1 * spriteSize - cameraY + HEIGHT / 2; y < HEIGHT; y += spriteSize, y1++) {
-                    for (int x = x1 * spriteSize - cameraX + WIDTH / 2, x2 = x1; x < WIDTH; x += spriteSize, x2++) {
-                        if (x2 < 0 || x2 >= Game.map[0].length || y1 < 0 || y1 >= Game.map.length) {
+                int renderY = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
+                int renderX = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
+                for (int y = renderY * spriteSize - cameraY + HEIGHT / 2; y < HEIGHT; y += spriteSize, renderY++) {
+                    for (int x = renderX * spriteSize - cameraX + WIDTH / 2, x2 = renderX; x < WIDTH; x += spriteSize, x2++) {
+                        if (x2 < 0 || x2 >= Game.map[0].length || renderY < 0 || renderY >= Game.map.length) {
                             g.drawImage(Game.sprites.getSprite("red.png"), x, y, null);
                         } else {
-                            Game.map[y1][x2].render(g, x, y);
+                            Game.map[renderY][x2].render(g, x, y);
                         }
                     }
                 }
@@ -79,7 +92,15 @@ public class DungeonCanvas extends Canvas {
                 break;
             default:
         }
-
+        int renderY = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
+        int renderX = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
+        g.setColor(Color.CYAN);
+        for(int x = renderX * spriteSize - cameraX + WIDTH / 2;x<WIDTH;x+=spriteSize){
+            g.drawLine(x,HEIGHT,x,0);
+        }
+        for(int y = renderY * spriteSize - cameraY + HEIGHT / 2;y<HEIGHT;y+=spriteSize){
+            g.drawLine(0,y,WIDTH,y);
+        }
         g.dispose();
         bs.show();
 

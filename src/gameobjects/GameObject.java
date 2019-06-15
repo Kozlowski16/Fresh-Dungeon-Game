@@ -1,5 +1,9 @@
 package gameobjects;
 
+import main.Game;
+
+import java.awt.*;
+
 public abstract class GameObject {
     public String sprite;
     protected String name;
@@ -8,8 +12,13 @@ public abstract class GameObject {
     protected void setName(String name) {
         this.name = name;
     }
+    protected GameObject(String sprite, String name){
+        this.name = name;
+        this.sprite=sprite;
+    }
 
-    public void render() {
-
+    public void render(Graphics g, int x, int y) {
+        Image img = Game.sprites.getSprite(sprite);
+        g.drawImage(img, x, y, null);
     }
 }

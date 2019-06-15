@@ -15,7 +15,8 @@ public class Game implements Runnable {
     public static tile[][] map;
     public static SpriteHandler sprites = new SpriteHandler();
 
-    public static final int WIDTH = 640 * 3, HEIGHT = WIDTH / 12 * 9;
+    //private static final int WIDTH = 640 * 3, HEIGHT = WIDTH / 12 * 9;
+    private static final int WIDTH = 1000, HEIGHT = 1000;
     private Thread thread;
     private boolean running;
     private DungeonCanvas canvas;
@@ -39,10 +40,11 @@ public class Game implements Runnable {
         canvas = new DungeonCanvas();
         frame.add(canvas);
         frame.setVisible(true);
-        this.start();
         Floor floor = new Floor();
         floor.printFloor();
         map = floor.getMap();
+        this.start();
+
     }
 
     public synchronized void start() {
@@ -83,7 +85,7 @@ public class Game implements Runnable {
 
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                System.out.println("FPS: " + frames);
+                //System.out.println("FPS: " + frames);
                 frames = 0;
             }
         }

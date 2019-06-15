@@ -25,7 +25,7 @@ public class SpriteHandler {
             }
         }
         resizedImages = new HashMap<>();
-        resize(50);
+        resize(100);
     }
 
     public void resize(int size) {

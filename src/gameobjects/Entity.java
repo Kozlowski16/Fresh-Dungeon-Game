@@ -7,5 +7,9 @@ public abstract class Entity extends GameObject {
     protected int x;
     protected int y;
 
+    protected Entity(String sprite, String name){
+        super(sprite,name);
+    }
+
 
 }
