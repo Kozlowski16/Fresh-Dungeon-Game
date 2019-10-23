@@ -1,5 +1,7 @@
 package map;
 
+import gameobjects.Player;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -31,17 +33,18 @@ public class Floor {
         fill();
     }
 
-    public tile[][] getMap() {
-        tile[][] tileMap = new tile[map.length][map[0].length];
+    public Tile[][] getMap() {
+        Tile[][] tileMap = new Tile[map.length][map[0].length];
         for (int y = 0; y < tileMap.length; y++) {
             for (int x = 0; x < tileMap[0].length; x++) {
                 if (map[y][x] == '#') {
-                    tileMap[y][x] = new tile("wall.png");
+                    tileMap[y][x] = new Tile("wall.png");
                 } else {
-                    tileMap[y][x] = new tile("notwall.png");
+                    tileMap[y][x] = new Tile("notwall.png");
                 }
             }
         }
+        tileMap[0][0] = new Tile("notwall.png", new Player(1, 1));
         return tileMap;
     }
 

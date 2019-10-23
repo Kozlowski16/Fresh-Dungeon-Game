@@ -26,6 +26,9 @@ public class SpriteHandler {
         }
         resizedImages = new HashMap<>();
         resize(100);
+        for (String img : images.keySet()) {
+            System.out.println(img);
+        }
     }
 
     public void resize(int size) {

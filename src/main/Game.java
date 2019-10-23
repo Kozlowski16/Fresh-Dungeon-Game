@@ -1,8 +1,7 @@
 package main;
 
 import UI.DungeonCanvas;
-import map.Floor;
-import map.tile;
+import map.Map;
 import util.GameState;
 import util.SpriteHandler;
 
@@ -10,24 +9,40 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Game implements Runnable {
-
-    public static GameState gameState;
-    public static tile[][] map;
-    public static SpriteHandler sprites = new SpriteHandler();
-
-    //private static final int WIDTH = 640 * 3, HEIGHT = WIDTH / 12 * 9;
+    //private static final int WIDTH = 640 *2, HEIGHT = WIDTH / 12 * 9;
     private static final int WIDTH = 1000, HEIGHT = 1000;
+    private static Game instance;
+    public GameState gameState;
+    public Map map;
+    private SpriteHandler sprites;
     private Thread thread;
     private boolean running;
     private DungeonCanvas canvas;
 
-    public static void main(String[] args) {
-        new Game();
+    private Game() {
+        sprites = new SpriteHandler();
+        gameState = GameState.GAME;
+        map = new Map();
     }
 
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+            instance.setupUI();
+        }
+        return instance;
+    }
 
-    private Game() {
-        gameState = GameState.GAME;
+    public static void main(String[] args) {
+        Game game = Game.getInstance();
+        game.start();
+    }
+
+    public SpriteHandler getSpriteHandler() {
+        return sprites;
+    }
+
+    private void setupUI() {
         JFrame frame = new JFrame("Fresh Start");
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         frame.setMaximumSize(new Dimension(WIDTH, HEIGHT));
@@ -37,23 +52,19 @@ public class Game implements Runnable {
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setUndecorated(true);
-        canvas = new DungeonCanvas();
+        canvas = new DungeonCanvas(WIDTH, HEIGHT);
         frame.add(canvas);
         frame.setVisible(true);
-        Floor floor = new Floor();
-        floor.printFloor();
-        map = floor.getMap();
-        this.start();
-
     }
 
-    public synchronized void start() {
+    private synchronized void start() {
+
         thread = new Thread(this);
         thread.start();
         running = true;
     }
 
-    public synchronized void stop() {
+    private synchronized void stop() {
         try {
             thread.join();
             running = false;
@@ -71,21 +82,29 @@ public class Game implements Runnable {
         double delta = 0;
         long timer = System.currentTimeMillis();
         int frames = 0;
+        int ticks = 0;
         while (running) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
+
             while (delta >= 1) {
+                //System.out.println(delta);
                 //tick();
+                ticks++;
                 delta--;
             }
-            if (running)
+            if (running) {
+                //System.out.println("######");
                 canvas.render();
+            }
             frames++;
 
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                //System.out.println("FPS: " + frames);
+                System.out.println("FPS: " + frames);
+                System.out.println("Ticks: " + ticks);
+                ticks = 0;
                 frames = 0;
             }
         }

@@ -1,35 +1,38 @@
 package map;
 
 import gameobjects.Entity;
+import gameobjects.GameObject;
 import main.Game;
 
 import java.awt.*;
 
-public class tile {
+public class Tile {
     private String sprite;
-    private Entity gameObject;
+    public GameObject gameObject;
 
     public String getSprite() {
         return sprite;
     }
 
-    public tile(String sprite) {
+    public Tile(String sprite) {
         this.sprite = sprite;
     }
 
-    public tile(String sprite, Entity gameObject) {
+    public Tile(String sprite, Entity gameObject) {
         this.sprite = sprite;
         this.gameObject = gameObject;
     }
 
-    public Entity getGameObject() {
+    public GameObject getGameObject() {
         return gameObject;
     }
 
     public void render(Graphics g, int x, int y) {
-
-        Image img = Game.sprites.getSprite(sprite);
+        Image img = Game.getInstance().getSpriteHandler().getSprite(sprite);
         g.drawImage(img, x, y, null);
+        if (gameObject != null) {
+            gameObject.render(g, x, y);
+        }
     }
 
     public void setGameObject(Entity gameObject) {

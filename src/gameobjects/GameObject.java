@@ -12,13 +12,14 @@ public abstract class GameObject {
     protected void setName(String name) {
         this.name = name;
     }
-    protected GameObject(String sprite, String name){
+
+    protected GameObject(String sprite, String name) {
         this.name = name;
-        this.sprite=sprite;
+        this.sprite = sprite;
     }
 
     public void render(Graphics g, int x, int y) {
-        Image img = Game.sprites.getSprite(sprite);
+        Image img = Game.getInstance().getSpriteHandler().getSprite(sprite);
         g.drawImage(img, x, y, null);
     }
 }

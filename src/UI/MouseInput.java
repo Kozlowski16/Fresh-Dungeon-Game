@@ -18,7 +18,7 @@ public class MouseInput extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         lastX = e.getX();
         lastY = e.getY();
-        canvas.tileClicked(lastX,lastY);
+        canvas.tileClicked(lastX, lastY);
     }
 
     @Override
