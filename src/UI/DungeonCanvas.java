@@ -11,8 +11,8 @@ public class DungeonCanvas extends Canvas {
     private int WIDTH;
     private int HEIGHT;
     private int spriteSize = 100;
-    private int cameraX = WIDTH / 2 + 25;
-    private int cameraY = HEIGHT / 2 + 25;
+    private int cameraX = 0;//WIDTH / 2 + 25;
+    private int cameraY = 0;// HEIGHT / 2 + 25;
     private SpriteHandler sprites;
 
     public DungeonCanvas(int width, int height) {
@@ -36,22 +36,29 @@ public class DungeonCanvas extends Canvas {
         sprites.resize(spriteSize);
     }
 
-    public void tileClicked(int x, int y) {
+    public void tileClicked(int x, int y, int button) {
         int renderY = (int) Math.floor((cameraY - HEIGHT / 2.f) / spriteSize);
         int renderX = (int) Math.floor((cameraX - WIDTH / 2.f) / spriteSize);
+        /*
         System.out.println("#######################");
         System.out.println("Rendered X: " + renderX);
         System.out.println("Rendered Y: " + renderY);
+         */
         int offsetX = renderX * spriteSize - cameraX + WIDTH / 2;
         int offsetY = renderY * spriteSize - cameraY + HEIGHT / 2;
+        /*
         System.out.println(offsetX);
         System.out.println(offsetY);
+
+         */
         int clickedX = (x - offsetX) / spriteSize + renderX;
         int clickedY = (y - offsetY) / spriteSize + renderY;
-
+/*
         System.out.println("clicked X: " + clickedX);
         System.out.println("clicked Y: " + clickedY);
 
+ */
+        Game.getInstance().handleClick(clickedX, clickedY, button);
         //System.out.println(x);
 
     }
@@ -111,6 +118,12 @@ public class DungeonCanvas extends Canvas {
         for (int y = renderY * spriteSize - cameraY + HEIGHT / 2; y < HEIGHT; y += spriteSize) {
             g.drawLine(0, y, WIDTH, y);
         }
+        //System.out.println(Game.getInstance().player.x*spriteSize);
+        /*
+        for(double r = 0; r<2*Math.PI;r+=Math.PI/10){
+            g.drawLine(cameraX, cameraY, (int)(Math.cos(r)*10*spriteSize)+cameraX, (int)(Math.sin(r)*10*spriteSize)+cameraY);
+        }
+        */
         g.dispose();
         bs.show();
 

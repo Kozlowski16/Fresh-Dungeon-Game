@@ -1,51 +1,38 @@
 package map;
 
-import gameobjects.Player;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Floor {
 
-    private static Random r = new Random();
-    private final int width = 50;
-    private final int height = 50;
-    private Point start;
-    private Point exit;
-    private char[][] map;
-    private ArrayList<Point> points = new ArrayList<>();
-    private ArrayList<Point> points2 = new ArrayList<>();
-    private int IDCount = 0;
-    private int roomCount = 0;
+    private static Random r = new Random(1);
+    public Point start;
+    public Point exit;
+    public char[][] map;
+    private int width;
+    private int height;
+    private ArrayList<Point> points = new ArrayList<>(); //store points for creating rooms
+    private ArrayList<Point> points2 = new ArrayList<>(); //stores points for creating extra hallways
 
     public Floor() {
-        map = new char[height][width];
-        int roomNumber = 10;
+        this(60, 7);
+    }
+
+    public Floor(int size, int roomCount) {
+        width = size;
+        height = size;
+        map = new char[size][size];
         start = createFirstRoom();
-        for (int x = 0; x < roomNumber - 1; x++)
+        for (int x = 0; x < roomCount - 1; x++)
             createRoom();
-        extraHallways();
+        extraHallways(roomCount / 2);
         trim();
         start = findStart();
         exit = generateEnd();
-
+        System.out.println(start);
+        System.out.println(exit);
         fill();
-    }
-
-    public Tile[][] getMap() {
-        Tile[][] tileMap = new Tile[map.length][map[0].length];
-        for (int y = 0; y < tileMap.length; y++) {
-            for (int x = 0; x < tileMap[0].length; x++) {
-                if (map[y][x] == '#') {
-                    tileMap[y][x] = new Tile("wall.png");
-                } else {
-                    tileMap[y][x] = new Tile("notwall.png");
-                }
-            }
-        }
-        tileMap[0][0] = new Tile("notwall.png", new Player(1, 1));
-        return tileMap;
     }
 
     private Point findStart() {
@@ -64,28 +51,17 @@ public class Floor {
         for (int y = 0; y < map.length; y++) {
             for (int x = 0; x < map[0].length; x++) {
                 if (map[y][x] == ' ') {
-                    if (count2 == 0) {
-                        if (map[y][x + 1] == ' ') {
-                            map[y][x + 1] = 'E';
-                            return new Point(x + 1, y);
-                        } else if (map[y][x - 1] == ' ') {
-                            map[y][x - 1] = 'E';
-                            return new Point(x - 1, y);
-                        } else if (map[y + 1][x] == ' ') {
-                            map[y + 1][x] = 'E';
-                            return new Point(x, y + 1);
-                        } else if (map[y - 1][x] == ' ') {
-                            map[y - 1][x] = 'E';
-                            return new Point(x, y - 1);
-                        } else return generateEnd(count);
-                    }
                     count2--;
+                    if (count2 == 0 && map[y][x + 1] != '#' && map[y][x - 1] != '#' && map[y + 1][x] != '#' && map[y - 1][x] != '#') {
+                        map[y][x] = 'e';
+                        return new Point(x, y);
+                    } else if (count2 == 0) {
+                        return generateEnd(count);
+                    }
                 }
-
             }
         }
         throw new Error("Failed to find end");
-        //return null;
     }
 
     private Point generateEnd() {
@@ -97,52 +73,7 @@ public class Floor {
                 }
             }
         }
-        int count2 = r.nextInt(count) + 1;
-        for (int y = 0; y < map.length; y++) {
-            for (int x = 0; x < map[0].length; x++) {
-                if (map[y][x] == ' ') {
-                    if (count2 == 0) {
-                        if (map[y][x + 1] == ' ') {
-                            map[y][x + 1] = 'E';
-                            return new Point(x + 1, y);
-                        } else if (map[y][x - 1] == ' ') {
-                            map[y][x - 1] = 'E';
-                            return new Point(x - 1, y);
-                        } else if (map[y + 1][x] == ' ') {
-                            map[y + 1][x] = 'E';
-                            return new Point(x, y + 1);
-                        } else if (map[y - 1][x] == ' ') {
-                            map[y - 1][x] = 'E';
-                            return new Point(x, y - 1);
-                        } else return generateEnd(count);
-                    }
-                    count2--;
-                }
-
-            }
-        }
-        throw new Error("Failed to find end");
-        //return null;
-    }
-
-    public char[][] generateFloor() {
-        int roomNumber = 10;
-        createFirstRoom();
-        for (int x = 0; x < roomNumber - 1; x++)
-            createRoom();
-        extraHallways();
-        trim();
-        fill();
-        for (int y = 0; y < map.length; y++) {
-            for (int x = 0; x < map[0].length; x++) {
-                if (map[y][x] == 's') {
-                    map[0][0] = (char) (x + 1);
-                    map[0][1] = (char) y;
-                }
-            }
-        }
-
-        return map;
+        return generateEnd(count);
     }
 
     private Point createFirstRoom() {
@@ -153,15 +84,15 @@ public class Floor {
         Point[] p = new Point[(room.getWidth() + room.getHeight()) * 2 - 8];
         int position = 0;
         for (int x = 1; x < room.getWidth() - 1; x++) {
-            p[position] = new Point(x + x1, y1, IDCount);
+            p[position] = new Point(x + x1, y1);
             position++;
-            p[position] = new Point(x + x1, y1 + room.getHeight() - 1, IDCount);
+            p[position] = new Point(x + x1, y1 + room.getHeight() - 1);
             position++;
         }
         for (int y = 1; y < room.getHeight() - 1; y++) {
-            p[position] = new Point(x1, y1 + y, IDCount);
+            p[position] = new Point(x1, y1 + y);
             position++;
-            p[position] = new Point(x1 + room.getWidth() - 1, y1 + y, IDCount);
+            p[position] = new Point(x1 + room.getWidth() - 1, y1 + y);
             position++;
         }
         for (Point ps : p)
@@ -215,24 +146,23 @@ public class Floor {
             Point[] p = new Point[(room.getWidth() + room.getHeight()) * 2 - 8];
             int position = 0;
             for (int x = 1; x < room.getWidth() - 1; x++) {
-                p[position] = new Point(x + x1, y1, IDCount);
+                p[position] = new Point(x + x1, y1);
                 position++;
-                p[position] = new Point(x + x1, y1 + room.getHeight() - 1, IDCount);
+                p[position] = new Point(x + x1, y1 + room.getHeight() - 1);
                 position++;
             }
             for (int y = 1; y < room.getHeight() - 1; y++) {
-                p[position] = new Point(x1, y1 + y, IDCount);
+                p[position] = new Point(x1, y1 + y);
                 position++;
-                p[position] = new Point(x1 + room.getWidth() - 1, y1 + y, IDCount);
+                p[position] = new Point(x1 + room.getWidth() - 1, y1 + y);
                 position++;
             }
             if (!error && points.size() == 0) {
 
                 drawRoom(room, x1, y1);
-                IDCount++;
                 for (Point ps : p)
                     points.add(ps);
-                roomCount++;
+                //roomCount++;
                 break;
             } else if (!error) {
 
@@ -259,11 +189,10 @@ public class Floor {
 
                 } else {
                     createHallway(startPoint, endPoint, mode);
-                    IDCount++;
                     //drawRoom(room,x1,y1);
                     for (Point ps : p)
                         points.add(ps);
-                    roomCount++;
+                    //roomCount++;
                     break;
                 }
 
@@ -497,47 +426,26 @@ public class Floor {
         return start;
     }
 
-    private void extraHallways() {
+    private void extraHallways(int count) {
         String mode;
         Point endPoint;
         Point startPoint;
-        int num = 0;
-        do {
-            int count = 0;
+        for (int i = 0; i < count; i++) {
+            int tries = 0;
             do {
                 endPoint = points.get(r.nextInt(points.size()));
                 startPoint = points2.get(r.nextInt(points2.size()));
                 mode = validateHallway(startPoint, endPoint);
-
-                count++;
-            } while (mode.equals("error") && count < 100);
+                tries++;
+            } while (mode.equals("error") && tries < 1000);
             //System.out.println(num);
             if (!mode.equals("error")) {
                 createHallway(startPoint, endPoint, mode);
                 //System.out.println("did Somethng 2");
-            } else
-                //System.out.println("failed");
-                num++;
-        } while (num <= 3);
-        num = 0;
-        do {
-            int count = 0;
-            do {
-                endPoint = points.get(r.nextInt(points.size()));
-                startPoint = points.get(r.nextInt(points.size()));
-                mode = validateHallway(startPoint, endPoint);
-
-                count++;
-            } while (mode.equals("error") && count < 100);
-            //System.out.println(num);
-            if (!mode.equals("error")) {
-                createHallway(startPoint, endPoint, mode);
-                //System.out.println("did Somethng");
-            } else
-                //System.out.println("failed");
-                num++;
-        } while (num <= 10);
-        //System.out.println(num);
+            } else {
+            }
+            //System.out.println("failed");
+        }
     }
 
     private void fill() {
@@ -618,8 +526,6 @@ public class Floor {
         points.clear();
         points2.clear();
         map = new char[height][width];
-        roomCount = 0;
-        IDCount = 0;
     }
 
 

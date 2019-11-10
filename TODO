@@ -1,0 +1,23 @@
+High priority -
+    Implement stairs and different floors
+    Implement pickups
+    Have monsters die and delete themselves
+    Improve monster stat creation
+    Implement XP system
+
+Med priority
+    Create different monster
+    create different pickups
+    Sprite class for animations
+    Better sprites
+    Camera improvements
+
+
+Low priority / far future Updates
+    Settings folder
+    Main menu
+    Logger
+    Equipment
+    Ability to save games
+
+
